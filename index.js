@@ -1,64 +1,7 @@
-// const express = require('express');
-// const cors = require('cors');
-// const { MongoClient, ServerApiVersion } = require('mongodb');
-// const app = express();
-// require('dotenv').config();
-
-// const port = process.env.PORT || 5000;
-
-// //middleware 
-
-// app.use(express.json());
-// app.use(cors());
-
-
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.otdu5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-// console.log(uri);
-
-// // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   }
-// });
-
-// async function run() {
-//   try {
-//     // Connect the client to the server	(optional starting in v4.7)
-//     await client.connect();
-//     const visaCollection = client.db("visaNavigatorDB").collection("visaNavigator");
-//     // Send a ping to confirm a successful connection
-//     await client.db("admin").command({ ping: 1 });
-//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
-   
-//     app.post('/visa', async(req,res) => {
-//       const addNewVisa = req.body;
-//       console.log(addNewVisa);
-//       const result = await visaCollection.insertOne(addNewVisa);
-//       res.send(result);
-
-//      })
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     await client.close();
-//   }
-// }
-// run().catch(console.dir);
-
-// app.get('/', ((req,res) => {
-//     res.send("Server is Running!");
-// }))
-
-// app.listen(port,() => {
-//     console.log(`Server is Running at port: ${port}`);
-// })
 
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion,ObjectId } = require("mongodb");
 const app = express();
 require("dotenv").config();
 
@@ -89,11 +32,44 @@ async function run() {
 
     // Collections
     const visaCollection = client.db("visaNavigatorDB").collection("visaNavigator");
+    const applicationCollection = client.db("visaApplicantDB").collection("applications");
+
 
     app.get('/visa', async (req, res) => {
         const visas = await visaCollection.find().toArray();
         res.send(visas);
       });
+
+      app.get('/visa/:id', async (req, res) => {
+        const { id } = req.params;
+        const visa = await visaCollection.findOne({ _id: new ObjectId(id) });
+        res.send(visa);
+      });
+
+
+      app.get('/applications', async (req, res) => {
+        const email = req.query.email;
+        const applications = await applicationCollection.find({ email }).toArray();
+        res.send(applications);
+      });
+      
+      app.delete('/applications/:id', async (req, res) => {
+        const id = req.params.id;
+        const result = await applicationCollection.deleteOne({ _id: new ObjectId(id) });
+        res.send(result);
+      });
+      
+
+      app.post('/applications', async (req, res) => {
+        const applicationData = req.body;
+        const result = await applicationCollection.insertOne(applicationData);
+        res.send(result);
+      });
+
+
+      
+        
+        
       
 
     // POST API to add a new visa
