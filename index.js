@@ -46,18 +46,35 @@ async function run() {
         res.send(visa);
       });
 
-
-      app.get('/applications', async (req, res) => {
-        const email = req.query.email;
+    app.get('/applications', async (req, res) => {
+        const email = req.query.email; // Retrieve email from query params
+        if (!email) {
+          return res.status(400).send({ error: "Email is required" });
+        }
         const applications = await applicationCollection.find({ email }).toArray();
         res.send(applications);
       });
+
+      app.get('/visas', async (req, res) => {
+        const email = req.query.email;
+        const visas = await visaCollection.find({ addedBy: email }).toArray();
+        res.send(visas);
+      });
+        
+      
       
       app.delete('/applications/:id', async (req, res) => {
         const id = req.params.id;
         const result = await applicationCollection.deleteOne({ _id: new ObjectId(id) });
         res.send(result);
       });
+
+      app.delete('/visa/:id', async (req, res) => {
+        const id = req.params.id;
+        const result = await visaCollection.deleteOne({ _id: new ObjectId(id) });
+        res.send(result);
+      });
+      
       
 
       app.post('/applications', async (req, res) => {
@@ -66,10 +83,15 @@ async function run() {
         res.send(result);
       });
 
-
-      
-        
-        
+      app.put('/visa/:id', async (req, res) => {
+        const id = req.params.id;
+        const updatedData = req.body;
+        const result = await visaCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedData }
+        );
+        res.send(result);
+      });
       
 
     // POST API to add a new visa
