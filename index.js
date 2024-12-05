@@ -26,8 +26,8 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect to MongoDB once
-    await client.connect();
-    console.log("Connected to MongoDB successfully!");
+    // await client.connect();
+    // console.log("Connected to MongoDB successfully!");
 
     // Collections
     const visaCollection = client
@@ -73,9 +73,9 @@ async function run() {
         // Fetch the latest visas from the collection, sorted by _id (descending order)
         const visas = await visaCollection
           .find()
-          .sort({ _id: -1 }) // Sorting by _id in descending order (newest first)
-          .limit(limit) // Limiting to 6 visas
-          .toArray(); // Convert cursor to array
+          .sort({ _id: -1 })
+          .limit(limit)
+          .toArray();
 
         res.status(200).send(visas);
       } catch (error) {
@@ -113,7 +113,7 @@ async function run() {
         const result = await usersCollection.insertOne(user);
         res.send({ insertedId: result.insertedId });
       } catch (error) {
-        console.error("Error saving user:", error);
+        //console.error("Error saving user:", error);
         res.status(500).send({ message: "Failed to save user" });
       }
     });
@@ -132,19 +132,19 @@ async function run() {
     app.post("/visa", async (req, res) => {
       try {
         const addNewVisa = req.body;
-        console.log("New Visa Data Received:", addNewVisa);
+        //console.log("New Visa Data Received:", addNewVisa);
 
         const result = await visaCollection.insertOne(addNewVisa);
         res.send(result);
       } catch (error) {
-        console.error("Error adding new visa:", error.message);
+        //console.error("Error adding new visa:", error.message);
         res.status(500).send({ error: "Failed to add visa." });
       }
     });
 
     // Root route
     app.get("/", (req, res) => {
-      res.send("Visa Navigator Server is Running too!");
+      res.send("Visa Navigator Server is Running!");
     });
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error.message);
