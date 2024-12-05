@@ -60,6 +60,26 @@ async function run() {
         const visas = await visaCollection.find({ addedBy: email }).toArray();
         res.send(visas);
       });
+
+      app.get("/latest-visas", async (req, res) => {
+        try {
+          const limit = parseInt(req.query.limit) || 6; // Default to 6 if no limit is provided
+      
+          // Fetch the latest visas from the collection, sorted by _id (descending order)
+          const visas = await visaCollection
+            .find()
+            .sort({ _id: -1 }) // Sorting by _id in descending order (newest first)
+            .limit(limit) // Limiting to 6 visas
+            .toArray(); // Convert cursor to array
+      
+          res.status(200).send(visas);
+        } catch (error) {
+          console.error("Error fetching visas:", error.message);
+          res.status(500).send({ error: "Failed to fetch visas" });
+        }
+      });
+      
+      
         
       
       
