@@ -47,7 +47,7 @@ async function run() {
       });
 
     app.get('/applications', async (req, res) => {
-        const email = req.query.email; // Retrieve email from query params
+        const email = req.query.email; 
         if (!email) {
           return res.status(400).send({ error: "Email is required" });
         }
@@ -63,7 +63,7 @@ async function run() {
 
       app.get("/latest-visas", async (req, res) => {
         try {
-          const limit = parseInt(req.query.limit) || 6; // Default to 6 if no limit is provided
+          const limit = parseInt(req.query.limit) || 6; 
       
           // Fetch the latest visas from the collection, sorted by _id (descending order)
           const visas = await visaCollection
