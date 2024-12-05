@@ -108,6 +108,7 @@ async function run() {
 
     app.post("/users", async (req, res) => {
       const user = req.body;
+      console.log(user);
       try {
         const result = await usersCollection.insertOne(user);
         res.send({ insertedId: result.insertedId });
@@ -143,7 +144,7 @@ async function run() {
 
     // Root route
     app.get("/", (req, res) => {
-      res.send("Visa Navigator Server is Running!");
+      res.send("Visa Navigator Server is Running too!");
     });
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error.message);
